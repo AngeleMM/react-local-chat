@@ -1,27 +1,36 @@
-'use strict'
+'use strict';
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 export default
 
 class ChatHistory extends React.Component {
+
   constructor() {
     super();
+    this.state = {msgs : []};
+  }
+
+  componentDidUpdate(prev, next) {
+    const panel = this.refs.chat_container;
+    if (panel.lastChild) panel.lastChild.scrollIntoView();
   }
 
   render() {
-    let styles = {listStyleType: 'none', width: '5%'};
-    let listyle = {display: 'block', backgroundColor: '#36d1f7', borderRadius: '15px',
-                    color: '#f6fdff', margin: '5px', width: '100%', textAlign: 'center'};
-    let messageList = this.props.data.map(function(message) {
+
+    let messageList = this.props.messages.map((message, idx) => {
       return (
-        <li style = {listyle}>{message}</li>
+        <li key={idx} style={this.props.my_style.list_items}>
+	  {message}
+	</li>
       );
     });
+
     return (
-      <ul style = {styles}>
+      <div ref={"chat_container"} style={this.props.my_style.container}>
         {messageList}
-      </ul>
+      </div>
     );
   }
 };
