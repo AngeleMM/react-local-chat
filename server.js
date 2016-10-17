@@ -17,6 +17,9 @@ const server = http.createServer((req, res) => {
 		'utf-8',
 		(err, data) => res.end(data));
     break;
+  case '/logo.png':
+    fs.readFile('public/logo.png', (err, data) => res.end(data));
+    break;
   case '/bundle.js':
     fs.readFile('public/bundle.js',
 		'utf-8',
@@ -44,10 +47,8 @@ ws_server.on('connection', ws => {
 
     case 'connect':
       currentUsers++; break;
-    case 'disconnect':
-      currentUsers--; break;
     case 'user_count':
-      ws.send(JSON.stringify({reply:`${currentUsers}`}));
+      ws.send(JSON.stringify({users_count:`${currentUsers}`}));
       break;
     case 'new_message':
       messageHistory.push(client_reply.payload);
@@ -65,6 +66,11 @@ ws_server.on('connection', ws => {
       console.error('Unknown command from the client');
     }
   });
+
+  ws.on('close', () => {
+    currentUsers--;
+  });
+
 });
 
 server.listen(port, () =>
