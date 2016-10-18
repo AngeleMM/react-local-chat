@@ -13,7 +13,7 @@ class MsgInput extends React.Component {
 
   clickHandler(event) {
     if ((event.button === 0 || event.key === 'Enter') &&
-    this.state.msg !== '' && this.state.username !== '') {
+    this.state.msg.trim() !== '' && this.state.username.trim() !== '') {
       const now = (new Date()).toLocaleTimeString();
       const newMessage = `${this.state.username}[${now}]:${this.state.msg}`;
 
@@ -33,21 +33,27 @@ class MsgInput extends React.Component {
   }
 
   render() {
+    const styling = {
+      position:'absolute',
+      bottom:0,
+      width:'100%',
+      padding:'1em 1em 1em 1em'
+    };
     return (
-      <div>
+      <div style={styling}>
         <input
-          type="text"
+          type={"text"}
           onChange={this.formChanged2}
           value={this.state.username}
-          placeholder="Your Name"
+          placeholder={"Your Name"}
           style={this.props.name_style}
         />
         <input
-          type="text"
+          type={"text"}
           onChange={this.formChanged}
           value={this.state.msg}
           onKeyDown={this.clickHandler}
-          placeholder="Message"
+          placeholder={"Message"}
           style={this.props.message_style}
         />
         <button onClick={this.clickHandler} style={this.props.my_style}>

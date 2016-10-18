@@ -35,6 +35,10 @@
     "webpack": "^1.13.2"
   },
   "eslintConfig": {
+    "env":{
+      "browser":true,
+      "node":true
+    },
     "extends": "airbnb",
     "installedESLint": true,
     "plugins": [
@@ -47,7 +51,7 @@
     "compile_front_end": "mkdir -p dist && babel lib --out-dir dist",
     "bundle_front_end": "webpack --progress --colors dist/chat.js public/bundle.js",
     "front_end": "npm run compile_front_end && npm run bundle_front_end",
-    "lint":"eslint lib/**"
+    "lint":"eslint server.js lib/**"
   },
   "author": "Edgar Aroutiounian <edgar.factorial@gmail.com>",
   "license": "MIT"

@@ -16,19 +16,19 @@ class ChatApp extends React.Component {
   componentDidMount() {
     this.conn.onmessage = (message) => {
       const reply = JSON.parse(message.data);
-      if (reply.users_count) {
-        this.setState({ usersNumber: reply.users_count });
-      } else if (reply.message_type) {
-        switch (reply.message_type) {
-          case 'initial_message_load':
-            this.setState({ msgs: reply.payload });
-            break;
-          case 'new_chat_message':
-            this.setState({ msgs: this.state.msgs.concat([reply.payload]) });
-            break;
-          default:
-            console.error('Unknown message reply type from server');
-        } }
+      switch (reply.message_type) {
+        case 'user_count':
+          this.setState({ usersNumber: reply.users_count });
+          break;
+        case 'initial_message_load':
+          this.setState({ msgs: reply.payload });
+          break;
+        case 'new_chat_message':
+          this.setState({ msgs: this.state.msgs.concat([reply.payload]) });
+          break;
+        default:
+          console.error('Unknown message reply type from server');
+      }
     };
 
     const initialMessageSendTimer = setInterval(() => {
@@ -46,23 +46,48 @@ class ChatApp extends React.Component {
           cmd: 'user_count',
         }));
       }
-    }, 4 * 1000);
+    }, 10 * 1000);
   }
 
   render() {
+    const theBiggestContainer = {
+      backgroundImage: "url('https://upload.wikimedia.org/wikipedia/commons/c/cd/Tatev_Monastery_from_a_distance.jpg')",
+      backgroundRepeat: 'repeat',
+      backgroundPosition: 'center',
+      backgroundSize: 'cover',
+      height:'100vh',
+    };
+    const programmersOnline = {
+      flexGrow: '1',
+      fontSize: '30px',
+      color: 'white',
+      padding: '14px 25px',
+      textAlign: 'center',
+      textDecoration: 'none',
+      display: 'inline-block',
+    };
+    const sourceCode = {
+      flexGrow: '1',
+      fontSize: '30px',
+      color: 'white',
+      padding: '14px 25px',
+      textAlign: 'center',
+      textDecoration: 'none',
+      display: 'inline-block',
+    };
     const mainContainer = {
       marginTop: '10px',
-      width: '950px',
-      height: '350px',
+      // height: '900px',
       margin: '0px auto',
     };
     const statusBarStyle = {
       color: '#00ff9f',
       textAlign: 'center',
-      borderRadius: '10px',
-      backgroundColor: '#7e7a85',
-      margin: '10px auto',
-      postition: 'absolute',
+      backgroundColor: '#acb2ff',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      display: 'flex',
+      opacity: '0.7',
       logo: {
         postition: 'relative',
         left: '5px',
@@ -73,17 +98,20 @@ class ChatApp extends React.Component {
       container: {
         marginLeft: '5px',
         marginRight: '5px',
-        height: '90%',
+	maxHeight:'450px',
         overflowY: 'scroll',
       },
       list_items: {
         listStyleType: 'none',
-        backgroundColor: '#36d1f7',
-        borderRadius: '5px 5px',
-        color: '#f6fdff',
+        fontFamily: 'sans-serif',
+        fontSize: '18px',
+        color: 'white',
         margin: '0.5em auto',
         padding: '.50rem',
-        width: '85%',
+        minWidth: '30px',
+        maxWidth: '50%',
+        backgroundColor: '#6641a7',
+        opacity: '0.85',
       },
     };
 
@@ -92,28 +120,24 @@ class ChatApp extends React.Component {
       border: 'none',
       height: '1.5rem',
       color: 'white',
-      margin: '.25rem',
       justifyContent: 'center',
       borderRadius: '5px',
-      width: '100%',
+      width: '97%',
     };
     const nameInput = {
       fontFamily: 'sans-serif',
-      width: '7.5%',
-      paddingLeft: '5px',
       transition: 'box-shadow 0.3s, border 0.3s',
       border: 'solid 1px #707070',
       fontSize: '12px',
       boxShadow: '0 0 5px 1px #969696',
     };
     const messageInput = {
-      width: '100%',
       display: 'block',
       fontFamily: 'sans-serif',
       fontSize: '18px',
-      paddingLeft: '5px',
       transition: 'box-shadow 0.3s, border 0.3s',
       border: 'solid 1px #707070',
+      width:'40%',
       boxShadow: '0 0 5px 1px #969696',
     };
     // const task_window_style = {
@@ -126,33 +150,32 @@ class ChatApp extends React.Component {
     //     textAlign: 'center',
     //     borderRadius: '40px'
     // };
-    const sourceLink =
-    'https://github.com/iteratehackerspace/react-local-chat';
     return (
-      <div style={mainContainer}>
-        <StatusBar my_style={statusBarStyle} users={this.state.usersNumber} />
-        <ChatHistory
-          my_style={chatHistoryStyle}
-          messages={this.state.msgs}
-        />
-        <MsgInput
-          my_style={buttonStyle}
-          name_style={nameInput}
-          message_style={messageInput}
-          send_message={msg => this.conn.send(JSON.stringify({
-            cmd: 'new_message',
-            payload: msg,
-          }))}
-        />
-        <div>
-          <em>
-            <a href={sourceLink}>Source code</a>
-          </em>
+      <div style={theBiggestContainer}>
+        <div style={mainContainer}>
+          <StatusBar
+            my_style={statusBarStyle}
+            users={this.state.usersNumber}
+            sourceCodeStyle={sourceCode}
+            programmersOnlineStyle={programmersOnline}
+          />
+          <ChatHistory
+            my_style={chatHistoryStyle}
+            messages={this.state.msgs}
+          />
+          <MsgInput
+            my_style={buttonStyle}
+            name_style={nameInput}
+            message_style={messageInput}
+            send_message={msg => this.conn.send(JSON.stringify({
+              cmd: 'new_message',
+              payload: msg,
+            }))}
+          />
         </div>
       </div>
     );
   }
-
 }
 
 ReactDOM.render(<ChatApp />, document.getElementById('react-container'));
