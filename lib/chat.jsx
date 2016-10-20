@@ -154,6 +154,10 @@ class ChatApp extends React.Component {
       width:'99.7%',
       boxShadow: '0 0 5px 1px #969696',
     };
+
+    const audio = {
+      display: 'none'
+    }
     // const task_window_style = {
     //     width: '950px',
     //     height: '350px',
@@ -187,6 +191,10 @@ class ChatApp extends React.Component {
               rawMessage:rawMsg,
             }))}
           />
+
+          <audio style={audio}>
+              <source src="../public/msg.mp3" type="audio/mpeg"/>
+          </audio>
         </div>
       //</div>
     );
