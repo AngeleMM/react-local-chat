@@ -1,59 +1,63 @@
-'use strict'
-
 import React from 'react';
-import ReactDOM from 'react-dom';
+
 export default
 class MsgInput extends React.Component {
 
-  constructor(){
+  constructor() {
     super();
-    this.click_handler = this.click_handler.bind(this);
-    this.form_changed = this.form_changed.bind(this);
-    this.state = {msg : ''};
-  }
-  
-   async click_handler(event) {
-    let req_opts = {
-      method:'post',
-      mode: 'no-cors',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body:JSON.stringify({'msg':this.state.msg})
-    };
-    await fetch('http://localhost:8000/message', req_opts);
+    this.clickHandler = this.clickHandler.bind(this);
+    this.formChanged = this.formChanged.bind(this);
+    this.formChanged2 = this.formChanged2.bind(this);
+    this.state = { msg: '', username: '' };
   }
 
-  form_changed (e) {
+  clickHandler(event) {
+    if ((event.button === 0 || event.key === 'Enter') &&
+    this.state.msg.trim() !== '' && this.state.username.trim() !== '') {
+      const now = (new Date()).toLocaleTimeString();
+      const newMessage = `${this.state.username}[${now}]:${this.state.msg}`;
+
+      this.props.sendMessage(newMessage, this.state.msg);
+      this.setState({ ...this.state, msg: '' });
+    }
+  }
+
+  formChanged2(e) {
+    const userName = e.currentTarget.value;
+    this.setState({ msg: this.state.msg, username: userName });
+  }
+
+  formChanged(e) {
     const letter = e.currentTarget.value;
-    this.setState({msg:letter});
+    this.setState({ msg: letter, username: this.state.username });
   }
 
   render() {
-    let msgButtonStyle = {
-      backgroundColor: '#4CAF50',
-      border: 'none',
-      color: 'white',
-      textAlign: 'center',
-      textDecoration: 'none',
-      display: 'inline-block',
-      fontSize: '20'}
-
-    let msgDivStyle = {
-      position: "fixed",
-      bottom: "0",
-      width: "90%"
-    }
-//
+    const styling = {
+      position: 'absolute',
+      bottom: 0,
+      width: '100%',
+    };
     return (
-      <div style = {msgDivStyle}>
-        <input type="text"
-                onChange={this.form_changed}
-                value={this.state.msg}/>
-        <button style = {msgButtonStyle} onClick = {this.click_handler}>
-	        Send
-        </button>
+      <div style={styling}>
+        <input
+          type={'text'}
+          onChange={this.formChanged2}
+          value={this.state.username}
+          placeholder={'Your Name'}
+          style={this.props.nameStyle}
+        />
+        <input
+          type={'text'}
+          onChange={this.formChanged}
+          value={this.state.msg}
+          onKeyDown={this.clickHandler}
+          placeholder={"Message"}
+          style={this.props.messageStyle}
+        />
+        <button onClick={this.clickHandler} style={this.props.myStyle}>
+          Send
+      </button>
       </div>
     );
   }
